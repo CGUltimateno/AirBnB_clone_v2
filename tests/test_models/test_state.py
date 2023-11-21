@@ -5,7 +5,7 @@ from models.state import State
 
 
 class test_state(test_basemodel):
-    """ """
+    """ Test for the state model """
 
     def __init__(self, *args, **kwargs):
         """ """
@@ -17,3 +17,7 @@ class test_state(test_basemodel):
         """ """
         new = self.value()
         self.assertEqual(type(new.name), str)
+        
+    def test_name_underscore(self):
+        """ test value of underscore instance"""
+        new = self.value()

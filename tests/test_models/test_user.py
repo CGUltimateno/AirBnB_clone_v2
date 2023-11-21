@@ -5,7 +5,7 @@ from models.user import User
 
 
 class test_User(test_basemodel):
-    """ """
+    """ Test for the User model """
 
     def __init__(self, *args, **kwargs):
         """ """
