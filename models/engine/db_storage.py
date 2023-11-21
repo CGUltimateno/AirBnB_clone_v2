@@ -4,7 +4,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 import models.misc as misc
 from sqlalchemy import create_engine
-
+from sqlalchemy.orm import sessionmaker, scoped_session
 from models.base_model import Base
 
 
@@ -15,12 +15,16 @@ class DBStorage:
     __session = None
 
     def __init__(self):
+        """Initializing instance"""
         self.__engine = create_engine(
             "mysql+mysqldb://{}:{}@{}/{}".format(
                 misc.user, misc.pwd, misc.host, misc.db
             ),
             pool_pre_ping=True,
         )
+
+        if misc.ENV == "test":
+            Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """Returns objects from db"""
@@ -31,6 +35,12 @@ class DBStorage:
             for obj in objects:
                 key = f"{obj.__class__.__name__}.{obj.id}"
                 all_objs[key] = obj
+        else:
+            for item in misc.classes.values():
+                objects = self.__session.query(item)
+                for obj in objects:
+                    key = f"{obj.__class__.__name__}.{obj.id}"
+                    all_objs[key] = obj
         return all_objs
 
     def new(self, obj):

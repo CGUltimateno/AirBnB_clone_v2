@@ -17,7 +17,3 @@ class test_state(test_basemodel):
         """ """
         new = self.value()
         self.assertEqual(type(new.name), str)
-        
-    def test_name_underscore(self):
-        """ test value of underscore instance"""
-        new = self.value()
