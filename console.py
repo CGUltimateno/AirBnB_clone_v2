@@ -131,7 +131,7 @@ class HBNBCommand(cmd.Cmd):
 
             if param_value.startswith('"'):
                 param_value = (param_value.strip('"')
-                               .replace('_', ''))
+                               .replace('_', ' '))
             try:
                 if '.' in param_value:
                     param_value = float(param_value)
