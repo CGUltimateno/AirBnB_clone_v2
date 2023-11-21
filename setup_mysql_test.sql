@@ -1,6 +1,6 @@
 -- Set up the database and a user for the system
 
-CREATE DATABASE IF NOT EXIST hbnb_test_db;
+CREATE DATABASE IF NOT EXISTS hbnb_test_db;
 
 CREATE USER IF NOT EXISTS 'hbnb_test'@'localhost'
 IDENTIFIED BY 'hbnb_test_pwd';
