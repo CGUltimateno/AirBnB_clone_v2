@@ -2,6 +2,7 @@
 """ Module for testing file storage"""
 import unittest
 from models.base_model import BaseModel
+from models.state import State
 from models import storage
 import os
 
@@ -31,14 +32,23 @@ class test_fileStorage(unittest.TestCase):
     def test_new(self):
         """ New object is correctly added to __objects """
         obj = BaseModel()
+        obj_key = type(obj).__name__ + "." + obj.id
         storage.new(obj)
-        self.assertTrue(obj in storage.all().values())
+        self.assertIn(obj_key, storage.all())
 
     def test_all(self):
         """ __objects is properly returned """
-        new = BaseModel()
+        new_base = BaseModel()
         temp = storage.all()
         self.assertIsInstance(temp, dict)
+
+    def test_all_cls(self):
+        """ Test all method but passing in instance """
+        new_state = State()
+        storage.new(new_state)
+        classname: str = new_state.__class__.__name__
+        key = f"{classname}.{new_state.id}"
+        self.assertIn(key, storage.all(State).keys())
 
     def test_base_model_instantiation(self):
         """ File is not created on BaseModel save """
@@ -48,9 +58,7 @@ class test_fileStorage(unittest.TestCase):
     def test_empty(self):
         """ Data is saved to file """
         new = BaseModel()
-        thing = new.to_dict()
         new.save()
-        new2 = BaseModel(**thing)
         self.assertNotEqual(os.path.getsize('file.json'), 0)
 
     def test_save(self):
@@ -62,12 +70,10 @@ class test_fileStorage(unittest.TestCase):
     def test_reload(self):
         """ Storage file is successfully loaded to __objects """
         new = BaseModel()
-        storage.save()
+        BaseModel.save(new)
         storage.reload()
-        loaded = []
-        for obj in storage.all().values():
-            loaded.append(obj)
-        self.assertEqual(len(loaded), 0)
+        self.assertEqual(new.to_dict(),
+                         list(storage.all(BaseModel).values())[0].to_dict())
 
     def test_reload_empty(self):
         """ Load from an empty file """
@@ -103,5 +109,13 @@ class test_fileStorage(unittest.TestCase):
     def test_storage_var_created(self):
         """ FileStorage object storage created """
         from models.engine.file_storage import FileStorage
-        print(type(storage))
         self.assertEqual(type(storage), FileStorage)
+
+    def test_del(self):
+        """ Test delete method for FileStorage object """
+        accra = State()
+        tema = State()
+        accra.save(), tema.save()
+        self.assertEqual(len(storage.all(State).keys()), 2)
+        storage.delete(tema)
+        self.assertEqual(len(storage.all(State).keys()), 1)
