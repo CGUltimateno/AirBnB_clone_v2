@@ -13,7 +13,7 @@ class FileStorage:
         """Returns a dictionary of models currently in storage"""
         if cls:
             key = '{}.'.format(cls.__name__)
-            return {k: v for k, v in self.__objects__.items() if
+            return {k: v for k, v in self.__objects.items() if
                     k.startswith(key)}
         return self.__objects
 
@@ -61,7 +61,7 @@ class FileStorage:
     def delete(self, obj=None):
         """Delete objects from file storage"""
         try:
-            del self.__objects["{}.{}".format(type(obj).__name__, obj.id)]
+            del self.__objects["{}.{}".format(obj.__class__.__name__, obj.id)]
         except (AttributeError, KeyError):
             pass
 
