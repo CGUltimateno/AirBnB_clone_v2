@@ -5,8 +5,6 @@ from datetime import datetime
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, String, DateTime, MetaData
 
-from models import storage
-
 Base = declarative_base()
 
 
