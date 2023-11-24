@@ -16,12 +16,8 @@ class DBStorage:
 
     def __init__(self):
         """Initializing instance"""
-        self.__engine = create_engine(
-            "mysql+mysqldb://{}:{}@{}/{}".format(
-                misc.user, misc.pwd, misc.host, misc.db
-            ),
-            pool_pre_ping=True,
-        )
+        url = f"mysql://{misc.user}:{misc.pwd}@{misc.host}/{misc.db}"
+        self.__engine = create_engine(url, pool_pre_ping=True)
 
         if misc.ENV == "test":
             Base.metadata.drop_all(self.__engine)
