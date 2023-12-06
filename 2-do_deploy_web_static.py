@@ -3,7 +3,6 @@
 function do_deploy."""
 from fabric.api import *
 from os.path import exists
-
 env.hosts = ['52.23.177.244	', '34.232.78.203']
 
 
