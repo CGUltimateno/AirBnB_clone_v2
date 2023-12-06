@@ -7,12 +7,18 @@ service nginx start
 
 root="/data/web_static"
 html="<html><head></head><body>Holberton School</body></html>"
-sudo mkdir -p /data/web_static/releases/test/
-sudo mkdir -p /data/web_static/shared/
-echo "$html" | sudo tee /data/web_static/releases/test/index.html > /dev/null
-sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
-sudo chown -R ubuntu:ubuntu /data/
 
-sudo sed -i "38i \\\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t}\n" /etc/nginx/sites-available/default
+# Create the folder /data/ if it doesn’t already exist
+
+mkdir -p "$root/releases/test"
+mkdir -p "$root/shared"
+echo "$html" | tee "$root/releases/test/index.html" > /dev/null
+
+sudo rm -rf "$root/current"
+sudo ln -sf "$root/releases/test" "$root/current"
+sudo chown -R "ubuntu:ubuntu" "/data/"
+
+nginx_config="/etc/nginx/sites-available/default"
+sed -i "/server_name _;/a\\        location /hbnb_static/ {alias $root/current/;}" "$nginx_config" > /dev/null
 
 sudo service nginx restart
