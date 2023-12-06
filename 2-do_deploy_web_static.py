@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """Fabric script that distributes an archive to your web servers, using the
 function do_deploy."""
-from fabric.api import *
+from fabric.api import put, run, env
 from os.path import exists
-env.hosts = ['52.23.177.244	', '34.232.78.203']
+env.hosts = ['52.23.177.244', '34.232.78.203']
 
 
 def do_deploy(archive_path):
@@ -17,7 +17,7 @@ def do_deploy(archive_path):
         run("mkdir -p {}".format(folder))
         run("tar -xzf /tmp/{} -C {}".format(file, folder))
         run("rm /tmp/{}".format(file))
-        run("mv {}/web_static/* {}/".format(folder, folder))
+        run('mv {0}{1}/web_static/* {0}{1}/'.format(folder, folder))
         run("rm -rf {}/web_static".format(folder))
         run("rm -rf /data/web_static/current")
         run("ln -s {} /data/web_static/current".format(folder))
