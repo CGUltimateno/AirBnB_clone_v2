@@ -3,22 +3,32 @@
 sudo apt-get update
 sudo apt-get -y install nginx
 
-service nginx start
+mkdir -p /data/web_static/releases/test/
+mkdir -p /data/web_static/shared/
+echo "$html" >  /data/web_static/releases/test/index.html
+ln -sf /data/web_static/releases/test/ /data/web_static/current
 
-root="/data/web_static"
-html="<html><head></head><body>Holberton School</body></html>"
+chown -R ubuntu:ubuntu /data/
+chgrp -R ubuntu /data/
 
-# Create the folder /data/ if it doesn’t already exist
-
-mkdir -p "$root/releases/test"
-mkdir -p "$root/shared"
-echo "$html" | tee "$root/releases/test/index.html" > /dev/null
-
-sudo rm -rf "$root/current"
-sudo ln -sf "$root/releases/test" "$root/current"
-sudo chown -R "ubuntu:ubuntu" "/data/"
-
-nginx_config="/etc/nginx/sites-available/default"
-sed -i "/server_name _;/a\\        location /hbnb_static/ {alias $root/current/;}" "$nginx_config" > /dev/null
+printf %s "server{
+    listen 80;
+    listen [::]:80 default_server;
+    root   /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+    add_header X-Served-By $HOSTNAME;
+    location /hbnb_static {
+        alias /data/web_static/current/;
+        index index.html index.htm;
+    }
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+    error_page 404 /404.html;
+    location /404 {
+        root /var/www/html;
+        internal;
+    }
+}" > /etc/nginx/sites-available/default
 
 sudo service nginx restart
