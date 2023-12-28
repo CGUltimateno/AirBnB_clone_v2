@@ -3,7 +3,7 @@
 script that starts a Flask web application with routes /, /hbnb, /c/<text>,
 /python<text>, and /number/<n>.
 """
-from flask import Flask
+from flask import Flask, abort
 
 app = Flask(__name__)
 
@@ -43,6 +43,7 @@ def number(n):
     """display n is a number only if n is an integer"""
     if n.isdigit():
         return f"{int(n)} is a number"
+    abort(404)
 
 
 if __name__ == '__main__':
