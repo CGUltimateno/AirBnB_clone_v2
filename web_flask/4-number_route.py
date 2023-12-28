@@ -39,12 +39,13 @@ def python_default():
 
 
 @app.route("/number/<num>")
-def number(n):
+def number(num):
     """display n is a number only if n is an integer"""
-    if n.isdigit():
-        return f"{int(n)} is a number"
+    if num.isdigit():
+        return f"{int(num)} is a number"
+
     abort(404)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(host="0")
