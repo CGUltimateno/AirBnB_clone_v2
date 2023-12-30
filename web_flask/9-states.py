@@ -34,6 +34,7 @@ def states_id(id):
     return (render_template("9-states.html",
                             states=dict, id=id, state=state))
 
+
 @app.teardown_appcontext
 def teardown_db(exception):
     """Close the current SQLAlchemy session."""
