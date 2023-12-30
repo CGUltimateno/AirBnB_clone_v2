@@ -1,30 +1,25 @@
 #!/usr/bin/python3
 """
-Define a module to serve requests
-for states.
+Define a module to serve requests for
+states.
 """
-
-from flask import Flask, render_template
-from models import storage
 from models.state import State
-from models.city import City
+from models.state import City
+from models import storage
+from os import environ
+from flask import Flask, render_template
+
 
 app = Flask(__name__)
 
 
-@app.route('/states')
+@app.route("/states")
 def states():
-    """Display a HTML page with a list of states."""
-    states = storage.all(State).values()
-    return render_template('9-states.html', states=states)
-
-
-@app.route('/states/<id>')
-def states_id(id):
-    """Display a HTML page with a list of states."""
+    """ Retrieve a list of all states. """
     states = storage.all(State)
     dict = {}
     state = ""
+
     for key, value in states.items():
         if value.id == id:
             dict[key] = value.cities
@@ -36,8 +31,7 @@ def states_id(id):
 
 
 @app.teardown_appcontext
-def teardown_db(exception):
-    """Close the current SQLAlchemy session."""
+def destroy(obj):
     storage.close()
 
 
