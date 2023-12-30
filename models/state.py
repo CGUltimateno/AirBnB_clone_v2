@@ -12,20 +12,24 @@ from models.city import City
 class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
-    if environ.get('HBNB_TYPE_STORAGE') == 'db':
+    if environ.get("HBNB_TYPE_STORAGE", "file") == "db":
         name = Column(String(128), nullable=False)
-        cities = relationship("City", cascade="all, delete", backref="state")
+        cities = relationship("City", cascade="delete",
+                              backref="state")
     else:
         name = ""
-        cities = ""
+        cities = []
 
-    if environ.get('HBNB_TYPE_STORAGE') != 'db':
+    if environ.get("HBNB_TYPE_STORAGE", "fs") == "fs":
             @property
             def cities(self):
                 """getter attribute cities that returns the list of City instances
                 with state_id equals to the current State.id"""
                 cities = []
-                for city in models.storage.all(City).values():
-                    if city.state_id == self.id:
-                        cities.append(city)
+                dict = models.storage.all(City)
+
+                for key, value in dict.items():
+                    if value.state_id == self.id:
+                        cities.append(value)
+
                 return cities
