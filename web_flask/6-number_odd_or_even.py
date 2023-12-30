@@ -1,13 +1,7 @@
 #!/usr/bin/python3
 """
 script that starts a Flask web application with routes /, /hbnb, /c/<text>,
-/python/<text> and /number/<n>.
-"""
-
-# !/usr/bin/python3
-"""
-script that starts a Flask web application with routes /, /hbnb, /c/<text>,
-/python<text>, and /number/<n>.
+/python<text>, and /number/<n>, /number_template/<n>, and /number_odd_or_even/<n>.
 """
 from flask import Flask, abort, render_template
 
@@ -58,6 +52,15 @@ def number_template(num):
     """display a HTML page only if n is an integer"""
     if num.isdigit():
         return render_template("5-number.html", num=num)
+
+    abort(404)
+
+
+@app.route("/number_odd_or_even/<num>")
+def number_odd_or_even(num):
+    """display a HTML page only if n is an integer"""
+    if num.isdigit():
+        return render_template("6-number_odd_or_even.html", num=num)
 
     abort(404)
 
