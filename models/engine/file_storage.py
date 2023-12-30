@@ -83,3 +83,9 @@ class FileStorage:
             "Review": {"place_id": str, "user_id": str,
                        "text": str}
         }
+
+    def close(self):
+        """
+        Calls reload() method for deserializing the JSON file to objects
+        """
+        self.reload()
