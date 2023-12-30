@@ -8,28 +8,22 @@ import models
 from models.base_model import BaseModel, Base
 from models.city import City
 
-
-class State(BaseModel, Base):
-    """ State class """
-    __tablename__ = 'states'
-    if environ.get("HBNB_TYPE_STORAGE", "file") == "db":
+if models.storage_type == 'db':
+    class State(BaseModel, Base):
+        """
+        State ORM
+        """
+        __tablename__ = 'states'
         name = Column(String(128), nullable=False)
-        cities = relationship("City", cascade="delete",
-                              backref="state")
-    else:
-        name = ""
-        cities = []
+        cities = relationship("City", backref="state",
+                              cascade="all, delete-orphan")
 
-    if environ.get("HBNB_TYPE_STORAGE", "fs") == "fs":
-            @property
-            def cities(self):
-                """getter attribute cities that returns the list of City instances
-                with state_id equals to the current State.id"""
-                cities = []
-                dict = models.storage.all(City)
-
-                for key, value in dict.items():
-                    if value.state_id == self.id:
-                        cities.append(value)
-
-                return cities
+else:
+    class State(BaseModel):
+    """ State class """
+    name = ""
+    @property
+    def cities(self):
+        from models import storage
+        all_cities = list(storage.all(City).values())
+        return list(filter((lambda c: c.state_id == self.id), all_cities))

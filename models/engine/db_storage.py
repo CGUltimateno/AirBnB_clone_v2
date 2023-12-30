@@ -23,43 +23,55 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """Returns objects from db"""
-        all_objs = {}
-
-        if cls:
-            objects = self.__session.query(cls)
-            for obj in objects:
-                key = f"{obj.__class__.__name__}.{obj.id}"
-                all_objs[key] = obj
+        """query on the current db session all cls objects
+        this method must return a dictionary: (like FileStorage)
+        key = <class-name>.<object-id>
+        value = object
+        """
+        dct = {}
+        if cls is None:
+            for c in classes.values():
+                objs = self.__session.query(c).all()
+                for obj in objs:
+                    key = obj.__class__.__name__ + '.' + obj.id
+                    dct[key] = obj
         else:
-            for item in misc.classes.values():
-                objects = self.__session.query(item)
-                for obj in objects:
-                    key = f"{obj.__class__.__name__}.{obj.id}"
-                    all_objs[key] = obj
-        return all_objs
+            objs = self.__session.query(cls).all()
+            for obj in objs:
+                key = obj.__class__.__name__ + '.' + obj.id
+                dct[key] = obj
+        return dct
 
     def new(self, obj):
-        """adds new obj to session"""
-        self.__session.add(obj)
+        """adds the obj to the current db session"""
+        if obj is not None:
+            try:
+                self.__session.add(obj)
+                self.__session.flush()
+                self.__session.refresh(obj)
+            except Exception as ex:
+                self.__session.rollback()
+                raise ex
 
     def save(self):
-        """save session"""
+        """commit all changes of the current db session"""
         self.__session.commit()
 
     def delete(self, obj=None):
-        """delete session"""
+        """ deletes from the current databse session the obj
+            is it's not None
+        """
         if obj is not None:
-            self.__session.delete(obj)
+            self.__session.query(type(obj)).filter(
+                type(obj).id == obj.id).delete()
 
     def reload(self):
-        """reload db"""
+        """reloads the database"""
         Base.metadata.create_all(self.__engine)
-        session = scoped_session(
-            sessionmaker(bind=self.__engine, expire_on_commit=False)
-        )
-        self.__session = scoped_session(session)
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
+        self.__session = scoped_session(session_factory)()
 
     def close(self):
-        """close"""
-        self.__session.remove()
+        """closes the working SQLAlchemy session"""
+        self.__session.close()
