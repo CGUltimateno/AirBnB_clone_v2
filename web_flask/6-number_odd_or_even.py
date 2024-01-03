@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 """
 script that starts a Flask web application with routes /, /hbnb, /c/<text>,
-/python<text>, and /number/<n>, /number_template/<n>, and /number_odd_or_even/<n>.
+/python<text>, and /number/<n>, /number_template/<n>,
+and /number_odd_or_even/<n>.
 """
 from flask import Flask, abort, render_template
 
