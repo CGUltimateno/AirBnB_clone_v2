@@ -3,12 +3,6 @@
 script that starts a Flask web application with routes /, /hbnb, /c/<text>,
 /python/<text> and /number/<n>.
 """
-
-# !/usr/bin/python3
-"""
-script that starts a Flask web application with routes /, /hbnb, /c/<text>,
-/python<text>, and /number/<n>.
-"""
 from flask import Flask, abort, render_template
 
 app = Flask(__name__)

@@ -32,6 +32,7 @@ def python(text):
     """display Python followed by text"""
     return f"Python {text.replace('_', ' ')}"
 
+
 @app.route('/python/')
 def python_default():
     """display Python followed by text"""
